@@ -8,7 +8,7 @@
 %}
 
 /* some common rules */
-SPACE    [\f | \r | \s]
+SPACE    [\f | \r | \s | \t]
 NUM      [0-9]+
 ALPHANUM [A-Za-z][A-Za-z0-9]*([A-Za-z0-9]*|[_][_]*[A-Za-z0-9][A-Za-z0-9]*)+
 BOTH     [A-Za-z0-9][A-Za-z0-9_]*[_]

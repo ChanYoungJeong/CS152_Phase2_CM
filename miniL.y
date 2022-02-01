@@ -115,7 +115,7 @@ statement : 	var ASSIGN expression
 		{printf("statement -> var ASSIGN expression\n");}
 		| IF bool_exp THEN statement_list ENDIF
 		{printf("statement -> IF bool_exp THEN statement_list ENDIF\n");}
-		| IF bool_exp THEN statement_list ELSE statement ENDIF
+		| IF bool_exp THEN statement_list ELSE statement_list ENDIF
 		{printf("statement -> IF bool_exp THEN statement ELSE statement \n");}
 		| WHILE bool_exp BEGINLOOP statement_list SEMICOLON ENDLOOP
 		{printf("statement -> \n");}
