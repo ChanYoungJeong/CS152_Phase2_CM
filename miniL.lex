@@ -2,6 +2,7 @@
    
 %{   
    /* write your C code here for definitions of variables and including headers */
+   #include "y.tab.h"
    int currentLine = 1;
    int currentPosition = 0; 
 %}
@@ -36,6 +37,7 @@ LINE      [\n]
 
 %%
    /* specific lexer rules in regex */
+
 "function"           	 {currentPosition += 8; return FUNCTION;}
 "beginparams"            {currentPosition += 11; return BEGIN_PARAMS;}
 "endparams"          	 {currentPosition += 10; return END_PARAMS;} 
@@ -96,12 +98,11 @@ LINE      [\n]
 
 .          {printf("Error at line %d, column %d: Identifier \"%s\" unrecognized symbol\n", currentLine, currentPosition, yytext); exit(0);}
 
-
 %%
 	/* C functions used in lexer */
 
-int main(int argc, char ** argv)
+/*int main(int argc, char ** argv)
 {
    yylex();
    return 0;
-}
+}*/
