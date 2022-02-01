@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -g -O0 -std=c99
 
 miniL: miniL-lex.o miniL-parser.o
-	$(CC) $< -o $@ -lfl
+	$(CC) $^ -o $@ -lfl
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

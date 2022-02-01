@@ -113,13 +113,13 @@ declaration : /*epsilon*/
 
 statement : 	var ASSIGN expression
 		{printf("statement -> var ASSIGN expression\n");}
-		| IF bool_exp THEN statement ENDIF
-		{printf("statement -> IF bool_exp THEN statement SEMICOLON ENDIF\n");}
-		| IF bool_exp THEN statement ELSE statement ENDIF
-		{printf("statement -> IF bool_exp THEN statement ELSE statement SEMI\n");}
-		| WHILE bool_exp BEGINLOOP statement SEMICOLON ENDLOOP
+		| IF bool_exp THEN statement_list ENDIF
+		{printf("statement -> IF bool_exp THEN statement_list ENDIF\n");}
+		| IF bool_exp THEN statement_list ELSE statement ENDIF
+		{printf("statement -> IF bool_exp THEN statement ELSE statement \n");}
+		| WHILE bool_exp BEGINLOOP statement_list SEMICOLON ENDLOOP
 		{printf("statement -> \n");}
-		| DO BEGINLOOP statement SEMICOLON ENDLOOP WHILE bool_exp
+		| DO BEGINLOOP statement_list SEMICOLON ENDLOOP WHILE bool_exp
 		{printf("statement -> DO BEGINLOOP statement SEMICOLON ENDLOOP WHILE bool_exp\n");}
 		| READ var
 		{printf("statement -> READ var\n");}
@@ -131,16 +131,22 @@ statement : 	var ASSIGN expression
 		{printf("statement -> BREAK\n");}
 		| RETURN expression
 		{printf("statement -> RETURN expression\n");}
-		| 
-		{printf("statement -> statement SEMICOLON\n");}
 		;
 
-bool_exp : expression comp expression
+statement_list : statement_list statement SEMICOLON
+		{printf("statement_list -> statement_list statement SEMICOLON\n");}
+		|statement SEMICOLON
+                {printf("statement_list -> statement SEMICOLON\n");}
+		|/*epsilon*/
+		{printf("statement_list -> epsilon\n");}
+		;
+
+bool_exp : bool_exp expression comp expression
 	   {printf("bool_exp -> bool_exp expression comp expression\n");}
-	   |NOT 
-	   {printf("NOT DONE\n");}
+	   |NOT bool_exp
+	   {printf("bool_exp -> NOT bool_exp\n");}
 	   |/*epsilon*/
-	   {printf("NOT DONE\n");}
+	   {printf("bool_exp -> epsilon\n");}
 	   ;
 
 comp :   EQ
@@ -178,10 +184,17 @@ term : var
          {printf("term -> NUM\n");}
 	|L_PAREN expression R_PAREN
          {printf("term -> L_PAREN expression R_PAREN\n");}
-	|IDENT L_PAREN expression R_PAREN
+	|IDENT L_PAREN R_PAREN
+	 {printf("term -> L_PAREN R_PAREN\n");}
+	|IDENT L_PAREN expression_list R_PAREN
          {printf("mul_exp -> IDENT L_PAREN expression R_PAREN\n");}
 	;
 
+expression_list : expression_list COMMA expression
+                {printf("expression_list -> expression_list COMMA expression\n");}
+		| expression
+		{printf("expression_list -> expression\n");}
+		;
 var : IDENT
          {printf("var -> IDENT\n");}
 	|IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET
