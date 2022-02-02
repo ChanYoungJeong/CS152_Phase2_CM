@@ -92,53 +92,97 @@ start : /*epsilon*/{printf("start -> epsilon\n");}|
 
 
 function : FUNCTION IDENT SEMICOLON 
-	   BEGIN_PARAMS declaration END_PARAMS
- 	   BEGIN_LOCALS declaration END_LOCALS
-	   BEGIN_BODY statement SEMICOLON END_BODY
+	   BEGIN_PARAMS declarations END_PARAMS
+ 	   BEGIN_LOCALS declarations END_LOCALS
+	   BEGIN_BODY statements END_BODY
 	   {printf("function -> FUNCTION IDENT SEMICOLON\n");} 
-	   {printf("	     BEGIN_PARAMS declaration END_PARAMS\n");} 
-	   {printf("  	     BEGIN_LOCALS declaration END_LOCALS\n");}
-	   {printf("	     BEGIN_BODY statement SEMICOLON END_BODY\n");}
+	   {printf("	     BEGIN_PARAMS declarations END_PARAMS\n");} 
+	   {printf("  	     BEGIN_LOCALS declarations END_LOCALS\n");}
+	   {printf("	     BEGIN_BODY statements END_BODY\n");}
 	   ;
 
-declaration : /*epsilon*/
-		{printf("declaration -> epsilon\n");}
-	     |IDENT COLON INTEGER SEMICOLON
-		{printf("delcartion -> IDENT COLON INTEGER SEMICOLON\n");}
-	     |IDENT COLON
-	      ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF
-	      INTEGER SEMICOLON
-	      {printf("declaration -> IDENT COLON ARRAY[NUM] OF INTEGER SEMICOLON\n");}
-	      ;
-
-statement : 	var ASSIGN expression
-		{printf("statement -> var ASSIGN expression\n");}
-		| IF bool_exp THEN statement_list ENDIF
-		{printf("statement -> IF bool_exp THEN statement_list ENDIF\n");}
-		| IF bool_exp THEN statement_list ELSE statement_list ENDIF
-		{printf("statement -> IF bool_exp THEN statement ELSE statement \n");}
-		| WHILE bool_exp BEGINLOOP statement_list SEMICOLON ENDLOOP
-		{printf("statement -> \n");}
-		| DO BEGINLOOP statement_list SEMICOLON ENDLOOP WHILE bool_exp
-		{printf("statement -> DO BEGINLOOP statement SEMICOLON ENDLOOP WHILE bool_exp\n");}
-		| READ var
-		{printf("statement -> READ var\n");}
-		| WRITE var
-		{printf("statement -> WRITE var\n");}
-		| CONTINUE
-		{printf("statement -> CONTINUE\n");}
-		| BREAK
-		{printf("statement -> BREAK\n");}
-		| RETURN expression
-		{printf("statement -> RETURN expression\n");}
+declarations: /*epsilon*/
+	    {printf("declarations->epsilon\n");}
+		|declaration SEMICOLON declarations
+		{printf("declarations->declaration SEMICOLON declarations\n");}
+		|declaration error {yyerror;}
 		;
 
-statement_list : statement_list statement SEMICOLON
-		{printf("statement_list -> statement_list statement SEMICOLON\n");}
+declaration:	identifiers COLON INTEGER
+	   	{printf("declaration->identifiers COLON INTEGER\n");}
+		|identifiers COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
+		{printf("declaration->identifiers COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
+		;
+
+identifiers:    IDENT
+	  	{printf("identifiers->IDENT\n");}
+		|IDENT COMMA identifiers
+		{printf("identifiers->IDENT COMMA identifiers\n");}
+		;
+	
+statements:	statement SEMICOLON statements
+	  	{printf("statements->statement SEMICOLON statements\n");}
 		|statement SEMICOLON
-                {printf("statement_list -> statement SEMICOLON\n");}
-		|/*epsilon*/
-		{printf("statement_list -> epsilon\n");}
+		{printf("statements->statement SEMICOLON\n");}
+		| statement error {yyerror;}
+		;
+
+statement:	vars
+	  	{printf("statements->vars\n");}
+	  	|ifs
+		{printf("statements->ifs\n");}
+		|whiles
+		{printf("statements->whiles\n");}
+		|dos
+		{printf("statements->dos\n");}
+		|reads
+		{printf("statements->reads\n");}
+		|writes
+		{printf("statements->writes\n");}
+		|continues
+		{printf("statements->continues\n");}
+		|returns
+		{printf("statements->returns\n");}
+		;
+
+vars:	var ASSIGN expression
+    	{printf("vars->var ASSIGN expression\n");}
+		;
+
+ifs:	IF bool_exp THEN statements ENDIF
+   		{printf("ifs->IF bool_exp THEN statements ENDIF\n");}
+		|IF bool_exp THEN statements ELSE statements ENDIF
+		{printf("ifs->IF bool_exp THEN statements ELSE statements ENDIF\n");}
+		;
+
+whiles:	WHILE bool_exp BEGINLOOP statements ENDLOOP
+      	{printf("whiles->WHILE bool_exp BEGINLOOP statements ENDLOOP\n");}
+		;
+
+dos:	DO BEGINLOOP statements ENDLOOP WHILE bool_exp
+   		{printf("dos-> DO BEGINLOOP statements ENDLOOP WHILE bool_exp\n");}
+		;
+
+varLoop:
+       	{printf("varLoop->epsilon\n");}
+		|COMMA var varLoop
+		{printf("varLoop-> COMMA var varLoop\n");}
+		;
+
+reads:  READ var varLoop
+     	{printf("reads->READ var varLoop\n");}
+		;
+     
+writes: WRITE var varLoop
+      	{printf("writes->WRITE var varLoop\n");}
+		;
+
+continues:  CONTINUE
+	 	{printf("continues->CONTINUE\n");}
+		;
+
+returns:    RETURN expression
+       	{printf("returns->RETURN expression\n");}
 		;
 
 bool_exp : bool_exp expression comp expression
@@ -164,17 +208,17 @@ comp :   EQ
 	;
 
 expression : mul_exp {printf("expression -> mul_exp\n");}
-		|expression ADD mul_exp {printf("expression -> expression ADD mul_exp\n");}
-		|expression SUB mul_exp {printf("expression -> expression SUB mul_exp\n");}
+		|mul_exp ADD mul_exp {printf("expression -> mul_exp ADD mul_exp\n");}
+		|mul_exp SUB mul_exp {printf("expression -> mul_exp SUB mul_exp\n");}
 		;
 
 mul_exp : term
 	 {printf("mul_exp -> term\n");}
-       	 |mul_exp MULT term
+       	 |term MULT term
          {printf("mul_exp -> mul_exp MULT term\n");}
-	 |mul_exp DIV term
+	 |term DIV term
          {printf("mul_exp -> mul_exp DIV term\n");}
-	 |mul_exp MOD term
+	 |term MOD term
          {printf("mul_exp -> mul_exp MOD term\n");}
 	 ;
 
@@ -185,12 +229,14 @@ term : var
 	|L_PAREN expression R_PAREN
          {printf("term -> L_PAREN expression R_PAREN\n");}
 	|IDENT L_PAREN R_PAREN
-	 {printf("term -> L_PAREN R_PAREN\n");}
+	 {printf("term -> IDENT L_PAREN R_PAREN\n");}
 	|IDENT L_PAREN expression_list R_PAREN
          {printf("mul_exp -> IDENT L_PAREN expression R_PAREN\n");}
 	;
 
-expression_list : expression_list COMMA expression
+expression_list : /*epsilon*/
+					{printf("expression_list -> epsilon\n");}
+		| expression_list COMMA expression
                 {printf("expression_list -> expression_list COMMA expression\n");}
 		| expression
 		{printf("expression_list -> expression\n");}
