@@ -108,16 +108,10 @@ declarations: /*epsilon*/
 		|declaration error {yyerror;}
 		;
 
-declaration:	identifiers COLON INTEGER
-	   	{printf("declaration->identifiers COLON INTEGER\n");}
-		|identifiers COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
-		{printf("declaration->identifiers COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
-		;
-
-identifiers:    IDENT
-	  	{printf("identifiers->IDENT\n");}
-		|IDENT COMMA identifiers
-		{printf("identifiers->IDENT COMMA identifiers\n");}
+declaration:	IDENT COLON INTEGER
+	   	{printf("declaration->IDENT COLON INTEGER\n");}
+		|IDENT COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
+		{printf("declaration->IDENT COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
 		;
 	
 statements:	statement SEMICOLON statements
@@ -141,6 +135,8 @@ statement:	vars
 		{printf("statements->writes\n");}
 		|continues
 		{printf("statements->continues\n");}
+		|breaks
+		{printf("statements->breaks\n");}
 		|returns
 		{printf("statements->returns\n");}
 		;
@@ -179,6 +175,10 @@ writes: WRITE var varLoop
 
 continues:  CONTINUE
 	 	{printf("continues->CONTINUE\n");}
+		;
+
+breaks:  BREAK
+	 	{printf("breaks->BREAK\n");}
 		;
 
 returns:    RETURN expression
