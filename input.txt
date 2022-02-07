@@ -1,12 +1,42 @@
 function fibonacci;
 beginparams
 	k : integer;
+	x : array[33] of integer;
+	z : integer;
 endparams
 beginlocals
+	std : integer;
+	h : array[400] of integer;
 endlocals
 beginbody
-	if k <= 1 then return 1; endif;
+	std := (k + 4) % z;
+	h[20] := (x[24] - x(h * x[4] + 3, h + 4)) + 21;
+	
+	if k <= 1 then 
+		return 1;
+		continue;
+	else
+		if not t >= 2 then
+			continue;
+		endif;
+		
+		while t < (2 + 3)
+		beginloop
+			read x[4 / 3];
+			break;
+		endloop;
+	endif;
+
+	do beginloop
+		write std;
+	endloop
+	while t / 4 == 2;	
+
+	continue;
+
 	return fibonacci(k - 1) + fibonacci(k - 2);
+
+	while not not x > 1 beginloop read b; write z[x * y() + 3 / 5]; endloop;
 endbody
 
 function main;
@@ -21,3 +51,4 @@ beginbody
 	fib_n := fibonacci(n);
 	write fib_n;
 endbody
+

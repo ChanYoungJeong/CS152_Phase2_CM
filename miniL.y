@@ -108,17 +108,12 @@ declarations: /*epsilon*/
 		|declaration error {yyerror;}
 		;
 
-declaration:	identifiers COLON INTEGER
-	   	{printf("declaration->identifiers COLON INTEGER\n");}
-		|identifiers COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
-		{printf("declaration->identifiers COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
+declaration:	IDENT COLON INTEGER
+	   	{printf("declaration->IDENT COLON INTEGER\n");}
+		|IDENT COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
+		{printf("declaration->IDENT COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
 		;
 
-identifiers:    IDENT
-	  	{printf("identifiers->IDENT\n");}
-		|IDENT COMMA identifiers
-		{printf("identifiers->IDENT COMMA identifiers\n");}
-		;
 	
 statements:	statement SEMICOLON statements
 	  	{printf("statements->statement SEMICOLON statements\n");}
@@ -128,21 +123,23 @@ statements:	statement SEMICOLON statements
 		;
 
 statement:	vars
-	  	{printf("statements->vars\n");}
+	  	{printf("statement->vars\n");}
 	  	|ifs
-		{printf("statements->ifs\n");}
+		{printf("statement->ifs\n");}
 		|whiles
-		{printf("statements->whiles\n");}
+		{printf("statement->whiles\n");}
 		|dos
-		{printf("statements->dos\n");}
+		{printf("statement->dos\n");}
 		|reads
-		{printf("statements->reads\n");}
+		{printf("statement->reads\n");}
 		|writes
-		{printf("statements->writes\n");}
+		{printf("statement->writes\n");}
 		|continues
-		{printf("statements->continues\n");}
+		{printf("statement->continues\n");}
+		|breaks
+		{printf("statement->breaks\n");}
 		|returns
-		{printf("statements->returns\n");}
+		{printf("statement->returns\n");}
 		;
 
 vars:	var ASSIGN expression
@@ -180,6 +177,9 @@ writes: WRITE var varLoop
 continues:  CONTINUE
 	 	{printf("continues->CONTINUE\n");}
 		;
+breaks : BREAK
+		{printf("breaks -> BREAK \n");}
+
 
 returns:    RETURN expression
        	{printf("returns->RETURN expression\n");}
@@ -208,17 +208,17 @@ comp :   EQ
 	;
 
 expression : mul_exp {printf("expression -> mul_exp\n");}
-		|mul_exp ADD mul_exp {printf("expression -> mul_exp ADD mul_exp\n");}
-		|mul_exp SUB mul_exp {printf("expression -> mul_exp SUB mul_exp\n");}
+		| expression ADD mul_exp {printf("expression -> expression ADD mul_exp\n");}
+		| expression SUB mul_exp {printf("expression -> expression SUB mul_exp\n");}
 		;
 
 mul_exp : term
 	 {printf("mul_exp -> term\n");}
-       	 |term MULT term
+       	 |mul_exp MULT term
          {printf("mul_exp -> mul_exp MULT term\n");}
-	 |term DIV term
+	 |mul_exp DIV term
          {printf("mul_exp -> mul_exp DIV term\n");}
-	 |term MOD term
+	 |mul_exp MOD term
          {printf("mul_exp -> mul_exp MOD term\n");}
 	 ;
 
@@ -234,13 +234,12 @@ term : var
          {printf("mul_exp -> IDENT L_PAREN expression R_PAREN\n");}
 	;
 
-expression_list : /*epsilon*/
-					{printf("expression_list -> epsilon\n");}
-		| expression_list COMMA expression
+expression_list : expression_list COMMA expression
                 {printf("expression_list -> expression_list COMMA expression\n");}
 		| expression
 		{printf("expression_list -> expression\n");}
 		;
+
 var : IDENT
          {printf("var -> IDENT\n");}
 	|IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET
