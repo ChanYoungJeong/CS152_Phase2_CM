@@ -70,7 +70,7 @@ extern int currentPosition;
 %token COLON
 %token COMMA
 %token L_PAREN
-%token R_PAREN
+%p_DG9pfHviKB3B9XYX8O3bljebGKoGTt1ypdzUoken R_PAREN
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET
 %token ASSIGN
