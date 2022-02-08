@@ -91,11 +91,11 @@ start : /*epsilon*/{printf("start -> epsilon\n");}|
 	;
 
 
-function : FUNCTION IDENT SEMICOLON 
+function : FUNCTION identifiers SEMICOLON 
 	   BEGIN_PARAMS declarations END_PARAMS
  	   BEGIN_LOCALS declarations END_LOCALS
 	   BEGIN_BODY statements END_BODY
-	   {printf("function -> FUNCTION IDENT SEMICOLON\n");} 
+	   {printf("function -> FUNCTION identifiers SEMICOLON\n");} 
 	   {printf("	     BEGIN_PARAMS declarations END_PARAMS\n");} 
 	   {printf("  	     BEGIN_LOCALS declarations END_LOCALS\n");}
 	   {printf("	     BEGIN_BODY statements END_BODY\n");}
@@ -108,10 +108,10 @@ declarations: /*epsilon*/
 		|declaration error {yyerror;}
 		;
 
-declaration:	IDENT COLON INTEGER
-	   	{printf("declaration->IDENT COLON INTEGER\n");}
-		|IDENT COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
-		{printf("declaration->IDENT COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
+declaration:	identifiers COLON INTEGER
+	   	{printf("declaration->identifiers COLON INTEGER\n");}
+		|identifiers COLON ARRAY L_SQUARE_BRACKET NUM R_SQUARE_BRACKET OF INTEGER
+		{printf("declaration->identifiers COLON ARRAY L_SQUARE_BRACKET NUM %d R_SQUARE_BRACKET OF INTEGER\n", $5);}
 		;
 
 	
@@ -224,14 +224,14 @@ mul_exp : term
 
 term : var
          {printf("term -> var\n");}
-	|NUM
-         {printf("term -> NUM\n");}
+	|numbers
+         {printf("term -> numbers\n");}
 	|L_PAREN expression R_PAREN
          {printf("term -> L_PAREN expression R_PAREN\n");}
-	|IDENT L_PAREN R_PAREN
-	 {printf("term -> IDENT L_PAREN R_PAREN\n");}
-	|IDENT L_PAREN expression_list R_PAREN
-         {printf("mul_exp -> IDENT L_PAREN expression R_PAREN\n");}
+	|identifiers L_PAREN R_PAREN
+	 {printf("term -> identifiers L_PAREN R_PAREN\n");}
+	|identifiers L_PAREN expression_list R_PAREN
+         {printf("mul_exp -> identifiers L_PAREN expression R_PAREN\n");}
 	;
 
 expression_list : expression_list COMMA expression
@@ -240,12 +240,18 @@ expression_list : expression_list COMMA expression
 		{printf("expression_list -> expression\n");}
 		;
 
-var : IDENT
-         {printf("var -> IDENT\n");}
-	|IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET
-         {printf("var -> IDENT L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
+var : identifiers
+         {printf("var -> identifiers\n");}
+	|identifiers L_SQUARE_BRACKET expression R_SQUARE_BRACKET
+         {printf("var -> identifiers L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
 	;
 
+numbers: NUM
+		{printf("numbers -> NUM %d\n", $1);}
+	;
+
+identifiers: IDENT
+		{printf("identifiers->IDENT %s\n", $1);}
 
 %%
 
